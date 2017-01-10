@@ -6,11 +6,21 @@ import math
 
 my_team_id = int(input())  # if 0 you need to score on the right of the map, if 1 you need to score on the left
 
+# Initiate lists for data storage
+entity_idList=[]
+entity_typeList=[]
+xList=[]
+yList=[]
+vxList=[]
+vyList=[]
+stateList=[]
+
 # game loop
 while True:
     my_score, my_magic = [int(i) for i in input().split()]
     opponent_score, opponent_magic = [int(i) for i in input().split()]
     entities = int(input())  # number of entities still in game
+
     for i in range(entities):
         # entity_id: entity identifier
         # entity_type: "WIZARD", "OPPONENT_WIZARD" or "SNAFFLE" (or "BLUDGER" after first league)
@@ -20,12 +30,12 @@ while True:
         # vy: velocity
         # state: 1 if the wizard is holding a Snaffle, 0 otherwise
         entity_id, entity_type, x, y, vx, vy, state = input().split()
-        entity_id = int(entity_id)
-        x = int(x)
-        y = int(y)
-        vx = int(vx)
-        vy = int(vy)
-        state = int(state)
+        entityList.add(int(entity_id))
+        xList.add(int(x))
+        yList.add(int(y))
+        vxList.add(int(vx))
+        vyList.add(int(vy))
+        stateList.add(int(state))
     for i in range(2):
 
         # Write an action using print
