@@ -15,11 +15,32 @@ vxList=[]
 vyList=[]
 stateList=[]
 
+# class definitions
+class WizardClass:
+    """My wizards"""
+    def __init__(self, x, y, vx, vy, state):
+        self.x = x
+        self.y = y
+        self.vx = vx
+        self.vy = vy
+        self.state = state
+
+class SnaffleClass:
+    """My wizards"""
+    def __init__(self, x, y, vx, vy, state):
+        self.x = x
+        self.y = y
+        self.vx = vx
+        self.vy = vy
+        self.state = state
+
 # game loop
 while True:
     my_score, my_magic = [int(i) for i in input().split()]
     opponent_score, opponent_magic = [int(i) for i in input().split()]
     entities = int(input())  # number of entities still in game
+    snaffleList=list() # list of ID's for the snaffles
+    wizardList=list()           # list of ID's for my wizards
 
     for i in range(entities):
         # entity_id: entity identifier
@@ -30,13 +51,16 @@ while True:
         # vy: velocity
         # state: 1 if the wizard is holding a Snaffle, 0 otherwise
         entity_id, entity_type, x, y, vx, vy, state = input().split()
-        entityList.add(int(entity_id))
-        xList.add(int(x))
-        yList.add(int(y))
-        vxList.add(int(vx))
-        vyList.add(int(vy))
-        stateList.add(int(state))
+
+        if entity_type == "WIZARD"
+            wizardList.add(WizardClass(x,y,vx,vy,state))
+
+        elif entity_type == "SNAFFLE"
+            snaffleID.add(i)
+
     for i in range(2):
+
+        wizard=wizardList[i]
 
         # Write an action using print
         # To debug: print("Debug messages...", file=sys.stderr)
@@ -44,6 +68,6 @@ while True:
 
         # Edit this line to indicate the action for each wizard (0 ≤ thrust ≤ 150, 0 ≤ power ≤ 500)
         # i.e.: "MOVE x y thrust" or "THROW x y power"
-        if
+        if state[wizardID[]]
 
         print("MOVE 8000 3750 100")
