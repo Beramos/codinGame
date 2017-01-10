@@ -7,7 +7,7 @@ import math
 my_team_id = int(input())  # if 0 you need to score on the right of the map, if 1 you need to score on the left
 
 # initiate center of goals
-if my_team_id is 0:
+if my_team_id is 1:
     goalCenter=(0, 3750)
 else:
     goalCenter=(16000, 3750)
@@ -31,6 +31,16 @@ class WizardClass:
         self.vy = vy
         self.state = state
 
+    def findMyClosestSnaffleLocation(self,SnaffleList,numberOfSnaffles):
+        distance=10**7
+        for i in range(numberOfSnaffles): #find closest Snaffle
+            distanceTemp=math.sqrt((SnaffleList[i].x-self.x)**2+(SnaffleList[i].y-self.y)**2) #calculate euclidean distance
+            if distanceTemp < distance: #keep minimum distance and store location
+                distance = distanceTemp
+                location=(SnaffleList[i].x, SnaffleList[i].y)
+
+        return(location)
+
 class SnaffleClass:
     """My wizards"""
     def __init__(self, x, y, vx, vy, state):
@@ -45,6 +55,7 @@ while True:
     my_score, my_magic = [int(i) for i in input().split()]
     opponent_score, opponent_magic = [int(i) for i in input().split()]
     entities = int(input())  # number of entities still in game
+    numberOfSnaffles=entities-4
     SnaffleList=list() # list of ID's for the snaffles
     WizardList=list()           # list of ID's for my wizards
 
@@ -68,9 +79,10 @@ while True:
         wizard=WizardList[i]
 
         if wizard.state is 1:
-            print("THROW" + " " + str(goalCenter[1]) + " " + str(goalCenter[2]) + " " + "500")
+            print("THROW" + " " + str(goalCenter[0]) + " " + str(goalCenter[1]) + " " + "500")
         else:
-            print("MOVE 8000 3750 100")
+            location=wizard.findMyClosestSnaffleLocation(SnaffleList,numberOfSnaffles)
+            print("MOVE" + " " + str(location[0]) + " " + str(location[1]) + " " + "100")
 
         # Write an action using print
         # To debug: print("Debug messages...", file=sys.stderr)
