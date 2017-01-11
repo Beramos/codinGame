@@ -9,8 +9,10 @@ my_team_id = int(input())  # if 0 you need to score on the right of the map, if 
 # initiate center of goals
 if my_team_id is 1:
     goalCenter=(0, 3750)
+    signToMyGoal=1          # set velocity sign that is towards my goal
 else:
     goalCenter=(16000, 3750)
+    signToMyGoal=-1
 
 # initiate lists for data storage
 entity_idList=[]
@@ -41,6 +43,17 @@ class WizardClass:
 
         return(location)
 
+    def findSnaffleMovingToGoal(self,SnaffleList,numberOfSnaffles):
+        distance=10**7
+        for i in range(numberOfSnaffles): #find closest Snaffle
+            distanceTemp=math.sqrt((SnaffleList[i].x-self.x)**2+(SnaffleList[i].y-self.y)**2)   #calculate euclidean distance
+            if (SnaffleList[1].vx)/math.fabs(SnaffleList[1].vx) == signToMyGoal:                #is snaffle moving towards my goal?
+              if distanceTemp < distance:
+                distance = distanceTemp
+                location=(SnaffleList[i].x, SnaffleList[i].y)
+
+        return(location)
+
 class SnaffleClass:
     """My wizards"""
     def __init__(self, x, y, vx, vy, state):
@@ -50,14 +63,26 @@ class SnaffleClass:
         self.vy = vy
         self.state = state
 
+class BludgerClass:
+    """My wizards"""
+    def __init__(self, x, y, vx, vy, state):
+        self.x = x
+        self.y = y
+        self.vx = vx
+        self.vy = vy
+        self.state = state
+
+
 # game loop
 while True:
     my_score, my_magic = [int(i) for i in input().split()]
     opponent_score, opponent_magic = [int(i) for i in input().split()]
-    entities = int(input())  # number of entities still in game
-    numberOfSnaffles=entities-4
-    SnaffleList=list() # list of ID's for the snaffles
+    entities = int(input())     # number of entities still in game
+    numberOfSnaffles=entities-6
+    SnaffleList=list()          # list of ID's for the snaffles
     WizardList=list()           # list of ID's for my wizards
+    BludgerList=list()          # list of ID's for the bludgers
+    OpponentList=list()
 
     for i in range(entities):
         # entity_id: entity identifier
@@ -75,14 +100,29 @@ while True:
         elif entity_type == "SNAFFLE":
             SnaffleList.append(SnaffleClass(int(x),int(y),int(vx),int(vy),int(state)))
 
-    for i in range(2):
-        wizard=WizardList[i]
+        elif entity_type == "BLUDGER":
+            BludgerList.append(BludgerClass(int(x),int(y),int(vx),int(vy),int(state)))
 
-        if wizard.state is 1:
-            print("THROW" + " " + str(goalCenter[0]) + " " + str(goalCenter[1]) + " " + "500")
-        else:
-            location=wizard.findMyClosestSnaffleLocation(SnaffleList,numberOfSnaffles)
-            print("MOVE" + " " + str(location[0]) + " " + str(location[1]) + " " + "100")
+        elif entity_type == "OPPONENT_WIZARD":
+            OpponentList.append(WizardClass(int(x),int(y),int(vx),int(vy),int(state)))
+
+    for i in range(2):
+
+        if my_score >= opponent_score: # offensive mode
+            wizard=WizardList[i]
+
+            if wizard.state is 1:
+                print("THROW" + " " + str(goalCenter[0]) + " " + str(goalCenter[1]) + " " + "500")
+            else:
+                location=wizard.findMyClosestSnaffleLocation(SnaffleList,numberOfSnaffles)
+                print("MOVE" + " " + str(location[0]) + " " + str(location[1]) + " " + "150")
+        else:   # defensive mode
+
+            if wizard.state is 1:
+                print("THROW" + " " + str(goalCenter[0]) + " " + str(goalCenter[1]) + " " + "500")
+            else:
+                location=wizard.findSnaffleMovingToGoal(SnaffleList,numberOfSnaffles)
+                print("MOVE" + " " + str(location[0]) + " " + str(location[1]) + " " + "150")
 
         # Write an action using print
         # To debug: print("Debug messages...", file=sys.stderr)
