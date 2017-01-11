@@ -44,15 +44,17 @@ class WizardClass:
         return(location)
 
     def findSnaffleMovingToGoal(self,SnaffleList,numberOfSnaffles):
+        location=-1
         distance=10**7
         for i in range(numberOfSnaffles): #find closest Snaffle
             distanceTemp=math.sqrt((SnaffleList[i].x-self.x)**2+(SnaffleList[i].y-self.y)**2)   #calculate euclidean distance
-            if (SnaffleList[1].vx)/math.fabs(SnaffleList[1].vx) == signToMyGoal:                #is snaffle moving towards my goal?
+            if math.copysign(1,SnaffleList[i].vx) == signToMyGoal:                #is snaffle moving towards my goal?
               if distanceTemp < distance:
                 distance = distanceTemp
                 location=(SnaffleList[i].x, SnaffleList[i].y)
-
-        return(location)
+            if location == -1:                                                                  # if there is no snaffle moving to our goal:
+                location=self.findMyClosestSnaffleLocation(SnaffleList,numberOfSnaffles)        # still go to offense
+            return(location)
 
 class SnaffleClass:
     """My wizards"""
@@ -107,9 +109,10 @@ while True:
             OpponentList.append(WizardClass(int(x),int(y),int(vx),int(vy),int(state)))
 
     for i in range(2):
+        wizard=WizardList[i]
 
-        if my_score >= opponent_score: # offensive mode
-            wizard=WizardList[i]
+        if my_score < opponent_score: # offensive mode
+
 
             if wizard.state is 1:
                 print("THROW" + " " + str(goalCenter[0]) + " " + str(goalCenter[1]) + " " + "500")
