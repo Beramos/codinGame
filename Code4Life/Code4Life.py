@@ -10,7 +10,7 @@ class myBot:
 
     def LABORATORY_lazarus:
 
-def can_make_med(sample_list):
+def can_make_med(sample_list,storage):
     for entry in sample_list:
         if min([entry['cost'][i]-storage[i] for i in range(0,len(entry['cost'])])) >= 0 &&\
          sum([entry['cost'][i]-storage[i] for i in range(0,len(entry['cost'])])) > 0:

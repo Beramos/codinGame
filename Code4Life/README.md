@@ -15,7 +15,7 @@ Possible moves:
 
 ### Roche-Fort 1.0
 
-**State machine**
+**State machine:**
 
 <----------------- Start -------------->
 * Can I make a medicine with the molecules I have?
@@ -41,7 +41,7 @@ Possible moves:
 
 <------------------- end -------------->
 
-**Protocols**
+**Protocols:**
 
 *DIAGNOSIS_berserk*
 * Go to the *DIAGNOSIS module*
