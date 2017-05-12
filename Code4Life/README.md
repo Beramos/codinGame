@@ -17,10 +17,11 @@ Possible moves:
 
 **State machine**
 <----------------- Start -------------->
-* Can I make a medicin with the molecules I have?
+* Can I make a medicine with the molecules I have?
   * "yes"
     * Go the *Laboratory module*
-    * Make the medicin
+    * Make the medicine
+    * Restart
   * "no"
     * Do I have data slots open?
       * "yes"
