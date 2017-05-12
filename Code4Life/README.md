@@ -16,6 +16,7 @@ Possible moves:
 ### Roche-Fort 1.0
 
 **State machine**
+
 <----------------- Start -------------->
 * Can I make a medicine with the molecules I have?
   * "yes"
@@ -37,13 +38,8 @@ Possible moves:
           * "no"
             * Initiate *MOLECULAR_madness*
             * Restart
-<------------------- end -------------->
 
-* Go to the *DIAGNOSIS module*
-* Take the three samples with the highest health points that are available
-* Go to the *MOLECULES module*
-* take the molecules for the highest health sample
-  * if there are spots left, also part of the needed molecules for the second molecule
+<------------------- end -------------->
 
 **Protocols**
 *DIAGNOSIS_berserk*
