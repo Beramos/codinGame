@@ -9,4 +9,65 @@ Robots can transfer data and molecules.
 Possible moves:
 * Collect data from *DIAGNOSIS module*
 * Gather molecules from *MOLECULES module*
-* Produce medicin at the *Laboratory module*
+* Produce medicine at the *Laboratory module*
+
+## AI's
+
+### Roche-Fort 1.0
+
+**State machine**
+<----------------- Start -------------->
+* Can I make a medicin with the molecules I have?
+  * "yes"
+    * Go the *Laboratory module*
+    * Make the medicin
+  * "no"
+    * Do I have data slots open?
+      * "yes"
+        * are there recipes in the cloud with a higher rating than mine?
+          * "yes"
+            * Initiate *DIAGNOSIS_berserk*
+            * Restart
+      * "no"
+        * Do I have enough molecules the make a medicine?
+          * "yes"
+            * Initiate *LABORATORY_lazarus*
+            * Restart
+          * "no"
+            * Initiate *MOLECULAR_madness*
+            * Restart
+<------------------- end -------------->
+
+* Go to the *DIAGNOSIS module*
+* Take the three samples with the highest health points that are available
+* Go to the *MOLECULES module*
+* take the molecules for the highest health sample
+  * if there are spots left, also part of the needed molecules for the second molecule
+
+**Protocols**
+*DIAGNOSIS_berserk*
+* Go to the *DIAGNOSIS module*
+* Fill up (max three) with the most valuable medicines available
+
+*MOLECULAR_madness*
+* Go to the *MOLECULES module*
+  * Did I already start gathering for the second
+    * "yes"
+      * Get the molecules for that one
+    * "no"
+      * Are there medicines with the same score?
+        * "yes"
+          * Take the molecules for the medicine with the least amount required (compare to inventory)
+        * "no"
+          * Take the molecules for the medicine with the highest health
+* if there are spots left, also part of the needed molecules for the second molecule
+* Do I have molecules for two medicines?
+  * "yes"
+    * Initiate *LABORATORY_lazarus* twice
+  * "no"
+    * Did I start collecting for the second medicine?
+      * "yes"
+        * Tick the "Started hoarding for the second medicine"
+
+*LABORATORY_lazarus*
+* Make them medicines yo!

@@ -36,8 +36,8 @@ while True:
         cost_c = int(cost_c)
         cost_d = int(cost_d)
         cost_e = int(cost_e)
+        print([cost_a,cost_b,cost_c,cost_d,cost_e], file=sys.stderr)
 
     # Write an action using print
     # To debug: print("Debug messages...", file=sys.stderr)
-
     print("GOTO DIAGNOSIS")
