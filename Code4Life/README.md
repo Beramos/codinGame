@@ -42,6 +42,7 @@ Possible moves:
 <------------------- end -------------->
 
 **Protocols**
+
 *DIAGNOSIS_berserk*
 * Go to the *DIAGNOSIS module*
 * Fill up (max three) with the most valuable medicines available
