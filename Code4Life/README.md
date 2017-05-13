@@ -18,28 +18,34 @@ Possible moves:
 **State machine:**
 
 <----------------- Start -------------->
-* Can I make a medicine with the molecules I have?
+
+* Did I want to connect to a module last step?
   * "yes"
-    * Go the *Laboratory module*
-    * Make the medicine
+    * Connect to module
     * Restart
   * "no"
-    * Do I have data slots open?
+    * Can I make a medicine with the molecules I have?
       * "yes"
-        * are there recipes in the cloud with a higher rating than mine?
-          * "yes"
-            * Initiate *DIAGNOSIS_berserk*
-            * Restart
+        * Go the *Laboratory module*
+        * Make the medicine
+        * Restart
       * "no"
-        * Do I have enough molecules the make a medicine?
+        * Do I have data slots open?
           * "yes"
-            * Initiate *LABORATORY_lazarus*
-            * Restart
+            * are there recipes in the cloud with a higher rating than mine?
+              * "yes"
+                * Initiate *DIAGNOSIS_berserk*
+                * Restart
           * "no"
-            * Initiate *MOLECULAR_madness*
-            * Restart
+            * Do I have enough molecules the make a medicine?
+              * "yes"
+                * Initiate *LABORATORY_lazarus*
+                * Restart
+              * "no"
+                * Initiate *MOLECULAR_madness*
+                * Restart
 
-<------------------- end -------------->
+    <------------------- end -------------->
 
 **Protocols:**
 
@@ -72,4 +78,3 @@ Possible moves:
 
 ## Ideas
 Use an optimiser each timestep, that checks the possible outcomes given the current inventory and the the available data in the cloud
-

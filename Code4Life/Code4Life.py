@@ -3,7 +3,9 @@ import math
 
 class myBot:
     """ This is my robot, jep! """
-    hoarding = False
+    def __init__(self):
+    self.hoarding = False
+
     def DIAGNOSIS_berserk:
 
     def MOLECULAR_madness:
@@ -14,12 +16,14 @@ def can_make_med(sample_list,storage):
     for entry in sample_list:
         if min([entry['cost'][i]-storage[i] for i in range(0,len(entry['cost'])])) >= 0 &&\
          sum([entry['cost'][i]-storage[i] for i in range(0,len(entry['cost'])])) > 0:
-            return True
+            return
         else:
             return False
 
-
 def Roche-Fort_10(storage,expertise,sample_list):
+    if can_make_med(sample_list,storage):
+        return "MODULE laboratory"
+    else:
 
     return move
 
