@@ -86,11 +86,11 @@ class myBot(object):
     def module_goto_connect(self):
         if self.destination == self.location:
             if self.destination == "LABORATORY":
-                return LABORATORY_lazarus()
+                return self.LABORATORY_lazarus()
             elif self.destination == "MOLECULE":
-                return MOLECULAR_madness()
+                return self.MOLECULAR_madness()
             else:
-                return DIAGNOSIS_berserk()       #print("CONNECT " + self.id_or_type)
+                return self.DIAGNOSIS_berserk()       #print("CONNECT " + self.id_or_type)
         else:
             self.location = self.destination
             return "GOTO " + self.destination
