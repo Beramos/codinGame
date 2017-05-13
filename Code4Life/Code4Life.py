@@ -5,23 +5,34 @@ class myBot(location,storage,expertise,sample_list):
     """ This is my robot """
     def __init__(self,location):
         self.hoarding = False
+        self.hoarding_id = False
         self.try_connect = False
         self.location = location
         self.destination = "DIAGNOSIS"
         self.id_or_type = ""
         self.capacity = [3 10]          # carrying capacity 0:data,1:MOLECULES
         self.storage = storage
-        self.expertise = expertise
+        self.my_Recipe_ids = []
+        self.cloud_recipe_ids = []
+        self.queue = []
+        # self.expertise = expertise
         self.sample_list = sample_list
 
-    def DIAGNOSIS_berserk:
+    def DIAGNOSIS_berserk(self):
+        for i in range(0,self.num_open_slots("data")):
+            self.queue.append("take_data")
+        return "CONNECT " + str(id_of_best_recipe(self.sample_list))
+
+    def MOLECULAR_madness(self):
+        if self.hoarding
+
+        self.queue.pop([0])
         return True
 
-    def MOLECULAR_madness:
+    def LABORATORY_lazarus(self):
         return True
 
-    def LABORATORY_lazarus:
-        return True
+    def exe_queue(self):
 
     def can_make_med(self): # needs revision ---------------------------!
         for entry in self.sample_list:
@@ -33,26 +44,53 @@ class myBot(location,storage,expertise,sample_list):
 
     def module_goto_connect(self):
         if self.destination == self.location:
-            print("CONNECT " + self.id_or_type)
+            if self.destination == "laboratory":
+                LABORATORY_lazarus()
+            elif self.destination == "molecule" :
+                MOLECULAR_madness()
+            else:
+                DIAGNOSIS_berserk()       #print("CONNECT " + self.id_or_type)
         else:
             print("GOTO " + self.destination)
         return True
 
-    def check_open_slots(self,data_or_molecules):
+    def num_open_slots(self,data_or_molecules):
         if data_or_molecules == "data":
-            if self.capacity[0] > len(self.expertise):
-                return True
-            else:
-                return False
+            return self.capacity[0] - len(self.my_recipe_ids)
         else:
-            if self.capacity[1] > len(self.storage):
-                return True
-            else:
-                return False
+            return self.capacity[1] - len(self.storage)
 
+    def update_recipes(self):
+        self.my_recipe_ids = [entry['id'] if entry['carrier'] == 0 for entry in self.sample_list]
+        self.cloud_recipe_ids = [entry['id'] if entry['carrier'] == 0 for entry in self.sample_list]
+        return True
+
+    def check_better_recipes(self):
+        health_cloud_recipes = [entry['health'] if entry['carrier'] == 1 for entry in self.sample_list]
+        health_my_recipes = [entry['health'] if entry['carrier'] == 0 for entry in self.sample_list]
+        if max(health_cloud_recipes) > max(health_my_recipes):
+            return True
+        else:
+            return False
+
+# Definition of general functions
+def id_of_best_recipe(recipes):
+    max_health = -1
+    for recipe in recipes:
+        if (recipe['carrier'] == 0) && (recipe['health'] > max_health):  # if it is in the cloud
+            max_health = recipe['health']
+            id_best_recipe = recipe['id']
+    return id_best_recipe
+
+def needed_molecules():
+    return True
+
+# Definition of state machine
 def roche_Fort_10(storage,expertise,sample_list,MyBot):
-    # WIP: here needs to be an update of the bots sample_list, etc.
-    #MyBot.
+    MyBot.sample_list = sample_list #update sample_list
+    MyBot.update_recipes()          #distinguish between cloud recipes and my recipes
+
+    # Residual tasks?
 
     if MyBot.try_connect:
         MyBot.module_goto_connect()
@@ -63,11 +101,14 @@ def roche_Fort_10(storage,expertise,sample_list,MyBot):
             MyBot.module_goto_connect()
             return True
         else:
-            if MyBot.check_open_slots("molecules"):
+            if MyBot.num_open_slots("molecules") > 0:
+                if MyBot.check_better_recipes():
+                    MyBot.DIAGNOSIS_berserk()
+                    return True
+            else:
+                MyBot.MOLECULAR_madness()
 
-
-
-    return move
+    print(move)
 
 
 # Bring data on patient samples from the diagnosis machine to the laboratory with enough molecules to produce medicine!

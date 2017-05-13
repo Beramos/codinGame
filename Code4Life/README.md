@@ -19,9 +19,9 @@ Possible moves:
 
 <----------------- Start -------------->
 
-* Did I want to connect to a module last step
+* Are there tasks left in queue?
   * "yes"
-    * Initiate *Module_goto_connect: destination*
+    * Complete residual task
     * Restart
   * "no"
     * Can I make a medicine with the molecules I have?
@@ -32,38 +32,32 @@ Possible moves:
       * "no"
         * Do I have data slots open?
           * "yes"
-            * are there recipes in the cloud with a higher rating than mine?
+            * are there recipes in the cloud with a higher health rating than mine?
               * "yes"
-                * Initiate *DIAGNOSIS_berserk*
+                * Initiate *Module_goto_connect: diagnosis module*
                 * Restart
           * "no"
-            * Do I have enough molecules the make a medicine?
-              * "yes"
-                * Initiate *LABORATORY_lazarus*
-                * Restart
-              * "no"
-                * Initiate *MOLECULAR_madness*
-                * Restart
+            * Initiate  *Module_goto_connect: molecular module*
+            * Restart
 
-    <------------------- end -------------->
+<------------------- end -------------->
 
 **Protocols:**
 
 *DIAGNOSIS_berserk*
-* Go to the *DIAGNOSIS module*
-* Fill up (max three) with the most valuable medicines available
+* Fill up with the most recipe available
+* Add task to queue to fill up with recipes
 
 *MOLECULAR_madness*
-* Go to the *MOLECULES module*
-  * Did I already start gathering for the second
-    * "yes"
-      * Get the molecules for that one
-    * "no"
-      * Are there medicines with the same score?
-        * "yes"
-          * Take the molecules for the medicine with the least amount required (compare to inventory)
-        * "no"
-          * Take the molecules for the medicine with the highest health
+* Did I already start gathering for the second
+  * "yes"
+    * Get the molecules for that one
+  * "no"
+    * Are there medicines with the same score?
+      * "yes"
+        * Take the molecules for the medicine with the least amount required (compare to inventory)
+      * "no"
+        * Take the molecules for the medicine with the highest health
 * if there are spots left, also part of the needed molecules for the second molecule
 * Do I have molecules for two medicines?
   * "yes"
@@ -78,6 +72,8 @@ Possible moves:
 
 *Module_goto_connect*
 
-
 ## Ideas
-Use an optimiser each timestep, that checks the possible outcomes given the current inventory and the the available data in the cloud
+* **Difficulty unknown:** there is a need to query based on the recipe IDs 
+* **Medium:** make the queuing system more elegant
+* **Simple:** start from a location based state Machine, starting pount of cascade is dependent on the location of the robot, it makes sense to fill up on recipes if the robot is at the diagnosis module
+* **Hard:** Use an optimiser each timestep, that checks the possible outcomes given the current inventory and the the available data in the cloud
