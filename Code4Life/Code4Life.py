@@ -17,6 +17,7 @@ class myBot(object):
         self.queue = []
         # self.expertise = expertise
         self.sample_list = []
+        self.ranked_recipes = []
 
     def DIAGNOSIS_berserk(self):
         self.ranked_recipes = rank_recipes(self.sample_list)
@@ -27,42 +28,42 @@ class myBot(object):
     def MOLECULAR_madness(self):        # Horrible implementation
         self.ranked_recipes = rank_recipes(self.sample_list)
         self.can_complete = 0
-        mol1 = needed_molecules(ranked_recipes[0]['cost'],self.inventory)
-        tempInv = [mol1[i] + inventory[i] for i in range(0,len(inventory))]
+        mol1 = needed_molecules(self.ranked_recipes[0]['cost'],self.storage)
+        tempInv = [mol1[i] + self.storage[i] for i in range(0,len(self.storage))]
 
-        if num_open_slots("molecules",self.capacity,self.my_recipe_ids,tempInv) > 0:
-            mol2 = needed_molecules(ranked_recipes[1]['cost'],[0, 0, 0, 0, 0])
-            tempInv = [mol2[i] + tempInv[i] for i in range(0,len(inventory))]
+        if self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,tempInv) > 0:
+            mol2 = needed_molecules(self.ranked_recipes[1]['cost'],[0, 0, 0, 0, 0])
+            tempInv = [mol2[i] + tempInv[i] for i in range(0,len(self.storage))]
 
-        if num_open_slots("molecules",self.capacity,self.my_recipe_ids,tempInv) > 0:
-            mol3 = needed_molecules(ranked_recipes[2]['cost'],[0, 0, 0, 0, 0])
-            tempInv = [mol3[i] + tempInv[i] for i in range(0,len(inventory))]
+        if self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,tempInv) > 0:
+            mol3 = needed_molecules(self.ranked_recipes[2]['cost'],[0, 0, 0, 0, 0])
+            tempInv = [mol3[i] + tempInv[i] for i in range(0,len(self.storage))]
             self.can_complete = 1
-        if ~needed_molecules(ranked_recipes[2]['cost'],mol3):
+        if sum(needed_molecules(self.ranked_recipes[2]['cost'],mol3)) == 0:
             self.can_complete = 2
 
-        molTot = [mol1[i] + mol2[i] + mol3[i] for i in rangerange(0,len(inventory))]
+        molTot = [mol1[i] + mol2[i] + mol3[i] for i in range(0,len(self.storage))]
         for i in range(0, molTot[0]):
             self.queue.append('CONNECT ' + 'A')
-        void = molTot.pop[0]
+        void = molTot.pop(0)
 
-        for i in range(0, molTot[1]):
+        for i in range(0, molTot[0]):
             self.queue.append('CONNECT ' + 'B')
-        void = molTot.pop[1]
+        void = molTot.pop(0)
 
-        for i in range(0, molTot[2]):
+        for i in range(0, molTot[0]):
             self.queue.append('CONNECT ' + 'C')
-        void = molTot.pop[2]
+        void = molTot.pop(0)
 
-        for i in range(0, molTot[3]):
+        for i in range(0, molTot[0]):
             self.queue.append('CONNECT ' + 'D')
-        void = molTot.pop[3]
+        void = molTot.pop(0)
 
-        for i in range(0, molTot[4]):
+        for i in range(0, molTot[0]):
             self.queue.append('CONNECT ' + 'E')
-        void = molTot.pop[4]
+        void = molTot.pop(0)
 
-        return "CONNECT " + str(self.queue.pop[-1]) # only one molecule should remain
+        return self.queue.pop(-1) # only one molecule should remain
 
     def LABORATORY_lazarus(self):
         if self.can_complete >= 1:
