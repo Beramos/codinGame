@@ -24,7 +24,8 @@ class myBot(location,storage,expertise,sample_list):
         return "CONNECT " + str(id_of_best_recipe(self.sample_list))
 
     def MOLECULAR_madness(self):        # Horrible implementation
-        ranked_recipes = rank_recipes(self.sample_list)
+        self.ranked_recipes = rank_recipes(self.sample_list)
+        self.can_complete = 0
         mol1 = needed_molecules(ranked_recipes[0]['id'],self.inventory)
         tempInv = [mol1[i] + inventory[i] for i in range(0,len(inventory))]
 
@@ -35,6 +36,9 @@ class myBot(location,storage,expertise,sample_list):
         if num_open_slots("molecules",self.capacity,self.my_recipe_ids,tempInv) > 0:
             mol3 = needed_molecules(ranked_recipes[2]['id'],[0, 0, 0, 0, 0])
             tempInv = [mol3[i] + tempInv[i] for i in range(0,len(inventory))]
+            self.can_complete = 1
+        if ~needed_molecules(ranked_recipes[2]['id'],mol3):
+            self.can_complete = 2
 
         molTot = [mol1[i] + mol2[i] + mol3[i] for i in rangerange(0,len(inventory))]
         for i in range(0, molTot[0]):
@@ -60,7 +64,12 @@ class myBot(location,storage,expertise,sample_list):
         return "CONNECT " + str(self.queue.pop[-1]) # only one molecule should remain
 
     def LABORATORY_lazarus(self):
-        return True
+        if self.can_complete >= 1:
+            self.queue.append('CONNECT ' + self.ranked_recipes[1]['id'])
+        if self.can_complete >= 2:
+            self.queue.append('CONNECT ' + self.ranked_recipes[2]['id'])
+        if self.can_complete >= 0:
+            return 'CONNECT ' + self.ranked_recipes[0]['id']
 
     def exe_queue(self):
 
