@@ -75,15 +75,16 @@ class myBot(object):
         if self.can_complete >= 2:
             self.queue.append('CONNECT ' + self.ranked_recipes[2]['id'])
         if self.can_complete >= 0:
-            return 'CONNECT ' + self.ranked_recipes[0]['id']
+            return 'CONNECT ' + str(self.ranked_recipes[0]['id'])
 
     def exe_queue(self):
         return self.queue.pop(0)
 
     def can_make_med(self): # needs revision ---------------------------!
-        for entry in self.ranked_recipes:
+        if len(self.ranked_recipes) > 0:
+            entry = self.ranked_recipes[0]
             if (min([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost']))]) >= 0) & \
-             (sum([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost']))]) > 0):
+                (sum([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost']))]) > 0):
                 return True
             else:
                 return False
