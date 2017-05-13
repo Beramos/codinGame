@@ -29,20 +29,23 @@ class myBot(object):
         self.ranked_recipes = rank_recipes(self.sample_list)
         self.can_complete = 0
         mol1 = needed_molecules(self.ranked_recipes[0]['cost'],self.storage)
+        print(needed_molecules(self.ranked_recipes[0]['cost'],self.storage), file =sys.stderr)
+        mol2 = needed_molecules(self.ranked_recipes[1]['cost'],[0, 0, 0, 0, 0])
+        mol3 = needed_molecules(self.ranked_recipes[2]['cost'],[0, 0, 0, 0, 0])
         tempInv = [mol1[i] + self.storage[i] for i in range(0,len(self.storage))]
+        molTot = mol1
 
-        if self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,tempInv) > 0:
-            mol2 = needed_molecules(self.ranked_recipes[1]['cost'],[0, 0, 0, 0, 0])
-            tempInv = [mol2[i] + tempInv[i] for i in range(0,len(self.storage))]
+        if self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,molTot) >= sum(mol2):
+            print('openslots' + str(self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,molTot)) + str(sum(mol2)), file=sys.stderr)
+            molTot = [mol1[i] + mol2[i] for i in range(0,5)]
+            print(molTot, file=sys.stderr)
 
-        if self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,tempInv) > 0:
-            mol3 = needed_molecules(self.ranked_recipes[2]['cost'],[0, 0, 0, 0, 0])
-            tempInv = [mol3[i] + tempInv[i] for i in range(0,len(self.storage))]
-            self.can_complete = 1
-        if sum(needed_molecules(self.ranked_recipes[2]['cost'],mol3)) == 0:
-            self.can_complete = 2
+        if self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,molTot) >= sum(mol3):
+            print('openslots' + str(self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,molTot)) + str(sum(mol2)), file=sys.stderr)
+            molTot = [mol1[i] + mol2[i] +mol3[i] for i in range(0,5)]
+            print(molTot, file=sys.stderr)
 
-        molTot = [mol1[i] + mol2[i] + mol3[i] for i in range(0,len(self.storage))]
+        print(molTot, file=sys.stderr)
         for i in range(0, molTot[0]):
             self.queue.append('CONNECT ' + 'A')
         void = molTot.pop(0)
@@ -63,6 +66,7 @@ class myBot(object):
             self.queue.append('CONNECT ' + 'E')
         void = molTot.pop(0)
 
+        print(len(MyBot.queue), file=sys.stderr)
         return self.queue.pop(-1) # only one molecule should remain
 
     def LABORATORY_lazarus(self):
@@ -77,9 +81,9 @@ class myBot(object):
         return self.queue.pop(0)
 
     def can_make_med(self): # needs revision ---------------------------!
-        for entry in self.sample_list:
+        for entry in self.ranked_recipes:
             if (min([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost']))]) >= 0) & \
-             (sum([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost']))]) < 0):
+             (sum([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost']))]) > 0):
                 return True
             else:
                 return False
@@ -101,9 +105,6 @@ class myBot(object):
         for entry in self.sample_list:
             if entry['carrier'] == 0:
                 self.my_recipe_ids.append(entry['id'])
-                print("in update", file=sys.stderr)
-                print(self.my_recipe_ids, file=sys.stderr)
-
             elif entry['carrier'] == -1:
                 self.cloud_recipe_ids.append(entry['id'])
         return True
@@ -130,7 +131,7 @@ class myBot(object):
         if data_or_molecules == "data":
             return capacity[0] - len(my_recipe_ids)
         else:
-            return capacity[1] - len(storage)
+            return capacity[1] - sum(storage)
 
 
 # Definition of general functions
@@ -164,9 +165,11 @@ def needed_molecules(recipe,inventory):
 def roche_Fort_10(storage,expertise,sample_list,MyBot):
     MyBot.sample_list = sample_list #update sample_list
     MyBot.update_recipes()          #distinguish between cloud recipes and my recipes
+    MyBot.storage = storage
 
     if len(MyBot.queue) > 0:
         move = MyBot.exe_queue()
+        print(len(MyBot.queue), file=sys.stderr)
     else:
         if MyBot.can_make_med():
             MyBot.destination = "LABORATORY"
