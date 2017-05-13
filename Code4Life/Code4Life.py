@@ -3,7 +3,7 @@ import math
 
 class myBot(location,storage,expertise,sample_list):
     """ This is my robot """
-    def __init__(self,location):
+    def __init__(self,location,storage,sample_list):
         self.hoarding = False
         self.hoarding_id = False
         self.try_connect = False
@@ -85,12 +85,12 @@ class myBot(location,storage,expertise,sample_list):
 
     def module_goto_connect(self):
         if self.destination == self.location:
-            if self.destination == "laboratory":
-                LABORATORY_lazarus()
-            elif self.destination == "molecule" :
-                MOLECULAR_madness()
+            if self.destination == "LABORATORY":
+                return LABORATORY_lazarus()
+            elif self.destination == "MOLECULE" :
+                return MOLECULAR_madness()
             else:
-                DIAGNOSIS_berserk()       #print("CONNECT " + self.id_or_type)
+                return DIAGNOSIS_berserk()       #print("CONNECT " + self.id_or_type)
         else:
             print("GOTO " + self.destination)
         return True
@@ -141,35 +141,37 @@ def num_open_slots(data_or_molecules,capacity,my_recipe_ids,storage):
     else:
         return capacity[1] - len(storage)
 
-
 # Definition of state machine
 def roche_Fort_10(storage,expertise,sample_list,MyBot):
     MyBot.sample_list = sample_list #update sample_list
     MyBot.update_recipes()          #distinguish between cloud recipes and my recipes
 
-    # Residual tasks?
-
-    if MyBot.try_connect:
-        MyBot.module_goto_connect()
-        return True
+    if len(MyBot.queue) > 0:
+        move = MyBot.exe_queue()
     else:
-        if can_make_med(sample_list,storage):
-            MyBot.destination = "LABORATORY"
-            MyBot.module_goto_connect()
-            return True
+        if MyBot.try_connect:
+            move = MyBot.module_goto_connect()
         else:
-            if MyBot.num_open_slots("molecules",MyBot.capacity,MyBot.my_recipe_ids,MyBot.storage) > 0:
-                if MyBot.check_better_recipes():
-                    MyBot.DIAGNOSIS_berserk()
-                    return True
+            if can_make_med(sample_list,storage):
+                MyBot.destination = "LABORATORY"
+                move = MyBot.module_goto_connect()
             else:
-                MyBot.MOLECULAR_madness()
+                if MyBot.num_open_slots("molecules",MyBot.capacity,MyBot.my_recipe_ids,MyBot.storage) > 0:
+                    if MyBot.check_better_recipes():
+                        MyBot.destination = "DIAGNOSIS"
+                        move = MyBot.module_goto_connect()
+                else:
+                    MyBot.destination = "MOLECULE"
+                    move = MyBot.module_goto_connect()
 
     print(move)
+    return True
 
 
-# Bring data on patient samples from the diagnosis machine to the laboratory with enough molecules to produce medicine!
+# Initiate step counter
+step_counter = 0
 
+# Fetching the std-in stream
 project_count = int(input())
 for i in range(project_count):
     a, b, c, d, e = [int(j) for j in input().split()]
@@ -210,7 +212,11 @@ while True:
         tempDict = {'id'=sample_id,'carrier'=carried_by,'rank'=rank,'health'=health,
             'cost'=[cost_a,cost_b,cost_c,cost_d,cost_e]}
         sample_list.append(tempDict)
-        #print([cost_a,cost_b,cost_c,cost_d,cost_e], file=sys.stderr)
 
-    # Write an action using print
+    if step_counter == 0                                                            # Is this the first tound?
+        MyBot = myBot(location,storage,sample_list)                                 # Initiate Roche-Fort 1.0
+    else:
+        roche_Fort_10(storage,expertise,sample_list,MyBot)                          # Execute Roche-Fort 1.0
+
+
     # To debug: print("Debug messages...", file=sys.stderr)
