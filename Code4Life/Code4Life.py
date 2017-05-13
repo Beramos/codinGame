@@ -100,7 +100,7 @@ class myBot:
         for entry in self.sample_list:
             if entry['carrier'] == 1:
                 self.my_recipe_ids.append(entry['id'])
-            elif entry['carrier'] == 0:
+            elif entry['carrier'] == -1:
                 self.cloud_recipe_ids.append(entry['id'])
         return True
 
@@ -111,19 +111,29 @@ class myBot:
         for entry in self.sample_list:
             if entry['carrier'] == 1:
                 health_my_recipes.append(entry['health'])
-            elif entry['carrier'] == 0:
+            elif entry['carrier'] == -1:
                 health_cloud_recipes.append(entry['health'])
 
-        if max(health_cloud_recipes) > max(health_my_recipes):
+        if len(health_my_recipes) == 0:
             return True
         else:
-            return False
+            if max(health_cloud_recipes) > max(health_my_recipes):
+                return True
+            else:
+                return False
+
+    def num_open_slots(self,data_or_molecules,capacity,my_recipe_ids,storage):
+        if data_or_molecules == "data":
+            return capacity[0] - len(my_recipe_ids)
+        else:
+            return capacity[1] - len(storage)
+
 
 # Definition of general functions
 def id_of_best_recipe(recipes):
     max_health = -1
     for recipe in recipes:
-        if (recipe['carrier'] == 0) & (recipe['health'] > max_health):  # if it is in the cloud
+        if (recipe['carrier'] == -1) & (recipe['health'] > max_health):  # if it is in the cloud
             max_health = recipe['health']
             id_best_recipe = recipe['id']
     return id_best_recipe
@@ -135,7 +145,7 @@ def rank_recipes(recipes):
     for i in range(0,3):
         counter = 0
         for recipe in copy_recipes:
-            if (recipe['carrier'] == 0) & (recipe['health'] > max_health):  # if it is in the cloud
+            if (recipe['carrier'] == -1) & (recipe['health'] > max_health):  # if it is in the cloud
                 max_health = recipe['health']
                 id_best_recipe = recipe['id']
                 counter += 1
@@ -145,12 +155,6 @@ def rank_recipes(recipes):
 def needed_molecules(recipe,inventory):
     ingredients = [recipe[i] - inventory[i] for i in range(0,len(inventory))]
     return ingredients
-
-def num_open_slots(data_or_molecules,capacity,my_recipe_ids,storage):
-    if data_or_molecules == "data":
-        return capacity[0] - len(my_recipe_ids)
-    else:
-        return capacity[1] - len(storage)
 
 # Definition of state machine
 def roche_Fort_10(storage,expertise,sample_list,MyBot):
