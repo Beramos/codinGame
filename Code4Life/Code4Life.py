@@ -8,7 +8,7 @@ class myBot:
         self.hoarding_id = False
         self.try_connect = False
         self.location = 'neutral'
-        self.destination = "DIAGNOSIS"
+        self.destination = "diagnosis"
         self.id_or_type = ""
         self.capacity = [3, 10]          # carrying capacity 0:data,1:MOLECULES
         self.storage = []
@@ -159,6 +159,7 @@ def roche_Fort_10(storage,expertise,sample_list,MyBot):
 
     if len(MyBot.queue) > 0:
         move = MyBot.exe_queue()
+        print("I was here", file=sys.stderr)
     else:
         if MyBot.try_connect:
             move = MyBot.module_goto_connect()
@@ -226,7 +227,6 @@ while True:
 
     if step_counter == 0:                                                            # Is this the first tound?
         MyBot = myBot()                                                              # Initiate Roche-Fort 1.0
-    else:
-        roche_Fort_10(storage,expertise,sample_list,MyBot)                          # Execute Roche-Fort 1.0
+    roche_Fort_10(storage,expertise,sample_list,MyBot)                          # Execute Roche-Fort 1.0
 
     # To debug: print("Debug messages...", file=sys.stderr)
