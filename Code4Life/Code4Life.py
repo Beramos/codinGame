@@ -1,22 +1,22 @@
 import sys
 import math
 
-class myBot(location,storage,expertise,sample_list):
+class myBot:
     """ This is my robot """
-    def __init__(self,location,storage,sample_list):
+    def __init__(self):
         self.hoarding = False
         self.hoarding_id = False
         self.try_connect = False
-        self.location = location
+        self.location = 'neutral'
         self.destination = "DIAGNOSIS"
         self.id_or_type = ""
         self.capacity = [3, 10]          # carrying capacity 0:data,1:MOLECULES
-        self.storage = storage
+        self.storage = []
         self.my_Recipe_ids = []
         self.cloud_recipe_ids = []
         self.queue = []
         # self.expertise = expertise
-        self.sample_list = sample_list
+        self.sample_list = []
 
     def DIAGNOSIS_berserk(self):
         self.ranked_recipes = rank_recipes(self.sample_list)
@@ -198,7 +198,7 @@ while True:
         storage_c = int(storage_c)
         storage_d = int(storage_d)
         storage_e = int(storage_e)
-        storage = [storage_a,storage_b,storage_c,storage_d,storage_z]
+        storage = [storage_a,storage_b,storage_c,storage_d,storage_e]
         expertise_a = int(expertise_a)
         expertise_b = int(expertise_b)
         expertise_c = int(expertise_c)
@@ -225,9 +225,8 @@ while True:
         sample_list.append(tempDict)
 
     if step_counter == 0:                                                            # Is this the first tound?
-        MyBot = myBot(location,storage,sample_list)                                 # Initiate Roche-Fort 1.0
+        MyBot = myBot()                                                              # Initiate Roche-Fort 1.0
     else:
         roche_Fort_10(storage,expertise,sample_list,MyBot)                          # Execute Roche-Fort 1.0
-
 
     # To debug: print("Debug messages...", file=sys.stderr)
