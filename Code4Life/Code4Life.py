@@ -12,7 +12,7 @@ class myBot(object):
         self.id_or_type = ""
         self.capacity = [3, 10]          # carrying capacity 0:data,1:MOLECULES
         self.storage = [0, 0, 0, 0, 0]
-        self.my_Recipe_ids = []
+        self.my_recipe_ids = []
         self.cloud_recipe_ids = []
         self.queue = []
         # self.expertise = expertise
@@ -20,9 +20,9 @@ class myBot(object):
 
     def DIAGNOSIS_berserk(self):
         self.ranked_recipes = rank_recipes(self.sample_list)
-        for i in range(1,self.num_open_slots("data")):
-            self.queue.append("CONNECT " + str(self.rank_recipes[i]['id']))
-        return "CONNECT " + str(self.rank_recipes[0]['id'])
+        for i in range(1,self.num_open_slots("data",self.capacity,self.my_recipe_ids,self.storage)):
+            self.queue.append("CONNECT " + str(self.ranked_recipes[i]['id']))
+        return "CONNECT " + str(self.ranked_recipes[0]['id'])
 
     def MOLECULAR_madness(self):        # Horrible implementation
         self.ranked_recipes = rank_recipes(self.sample_list)
@@ -73,7 +73,7 @@ class myBot(object):
             return 'CONNECT ' + self.ranked_recipes[0]['id']
 
     def exe_queue(self):
-        return self.queue.pop[0]
+        return self.queue.pop(0)
 
     def can_make_med(self): # needs revision ---------------------------!
         for entry in self.sample_list:
@@ -87,7 +87,7 @@ class myBot(object):
         if self.destination == self.location:
             if self.destination == "LABORATORY":
                 return self.LABORATORY_lazarus()
-            elif self.destination == "MOLECULE":
+            elif self.destination == "MOLECULES":
                 return self.MOLECULAR_madness()
             else:
                 return self.DIAGNOSIS_berserk()       #print("CONNECT " + self.id_or_type)
@@ -98,8 +98,11 @@ class myBot(object):
     def update_recipes(self):
         self.my_recipe_ids = []
         for entry in self.sample_list:
-            if entry['carrier'] == 1:
+            if entry['carrier'] == 0:
                 self.my_recipe_ids.append(entry['id'])
+                print("in update", file=sys.stderr)
+                print(self.my_recipe_ids, file=sys.stderr)
+
             elif entry['carrier'] == -1:
                 self.cloud_recipe_ids.append(entry['id'])
         return True
@@ -109,7 +112,7 @@ class myBot(object):
         health_my_recipes = []
 
         for entry in self.sample_list:
-            if entry['carrier'] == 1:
+            if entry['carrier'] == 0:
                 health_my_recipes.append(entry['health'])
             elif entry['carrier'] == -1:
                 health_cloud_recipes.append(entry['health'])
@@ -149,7 +152,7 @@ def rank_recipes(recipes):
                 max_health = recipe['health']
                 id_best_recipe = recipe['id']
                 counter += 1
-            ranked_recipes.append(copy_recipes.pop[counter])
+            ranked_recipes.append(copy_recipes.pop(counter))
     return ranked_recipes
 
 def needed_molecules(recipe,inventory):
@@ -163,22 +166,20 @@ def roche_Fort_10(storage,expertise,sample_list,MyBot):
 
     if len(MyBot.queue) > 0:
         move = MyBot.exe_queue()
-        print("I was here", file=sys.stderr)
     else:
-        if MyBot.try_connect:
+        if MyBot.can_make_med():
+            MyBot.destination = "LABORATORY"
             move = MyBot.module_goto_connect()
         else:
-            if MyBot.can_make_med():
-                MyBot.destination = "LABORATORY"
-                move = MyBot.module_goto_connect()
-            else:
-                if MyBot.num_open_slots("molecules",MyBot.capacity,MyBot.my_recipe_ids,MyBot.storage) > 0:
-                    if MyBot.check_better_recipes():
-                        MyBot.destination = "DIAGNOSIS"
-                        move = MyBot.module_goto_connect()
-                else:
-                    MyBot.destination = "MOLECULE"
+            print("make in med else", file=sys.stderr)
+            if MyBot.num_open_slots("data",MyBot.capacity,MyBot.my_recipe_ids,MyBot.storage) > 0:
+                print([MyBot.my_recipe_ids,MyBot.capacity], file=sys.stderr)
+                if MyBot.check_better_recipes():
+                    MyBot.destination = "DIAGNOSIS"
                     move = MyBot.module_goto_connect()
+            else:
+                MyBot.destination = "MOLECULES"
+                move = MyBot.module_goto_connect()
 
     print(move)
     return True
