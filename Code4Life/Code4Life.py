@@ -11,7 +11,7 @@ class myBot:
         self.destination = "diagnosis"
         self.id_or_type = ""
         self.capacity = [3, 10]          # carrying capacity 0:data,1:MOLECULES
-        self.storage = []
+        self.storage = [0, 0, 0, 0, 0]
         self.my_Recipe_ids = []
         self.cloud_recipe_ids = []
         self.queue = []
@@ -77,9 +77,9 @@ class myBot:
 
     def can_make_med(self): # needs revision ---------------------------!
         for entry in self.sample_list:
-            if (min([entry[i]['cost']-self.storage[i] for i in range(0,len(entry['cost']))]) >= 0) & \
-             (sum([entry[i]['cost']-self.storage[i] for i in range(0,len(entry['cost']))]) > 0):
-                return
+            if (min([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost']))]) >= 0) & \
+             (sum([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost']))]) > 0):
+                return True
             else:
                 return False
 
@@ -164,7 +164,7 @@ def roche_Fort_10(storage,expertise,sample_list,MyBot):
         if MyBot.try_connect:
             move = MyBot.module_goto_connect()
         else:
-            if can_make_med(sample_list,storage):
+            if MyBot.can_make_med():
                 MyBot.destination = "LABORATORY"
                 move = MyBot.module_goto_connect()
             else:
