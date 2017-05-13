@@ -10,7 +10,7 @@ class myBot(location,storage,expertise,sample_list):
         self.location = location
         self.destination = "DIAGNOSIS"
         self.id_or_type = ""
-        self.capacity = [3 10]          # carrying capacity 0:data,1:MOLECULES
+        self.capacity = [3, 10]          # carrying capacity 0:data,1:MOLECULES
         self.storage = storage
         self.my_Recipe_ids = []
         self.cloud_recipe_ids = []
@@ -77,8 +77,8 @@ class myBot(location,storage,expertise,sample_list):
 
     def can_make_med(self): # needs revision ---------------------------!
         for entry in self.sample_list:
-            if min([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost'])])) >= 0 && \
-             sum([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost'])])) > 0:
+            if (min([entry[i]['cost']-self.storage[i] for i in range(0,len(entry['cost']))]) >= 0) & \
+             (sum([entry[i]['cost']-self.storage[i] for i in range(0,len(entry['cost']))]) > 0):
                 return
             else:
                 return False
@@ -96,13 +96,24 @@ class myBot(location,storage,expertise,sample_list):
         return True
 
     def update_recipes(self):
-        self.my_recipe_ids = [entry['id'] if entry['carrier'] == 0 for entry in self.sample_list]
-        self.cloud_recipe_ids = [entry['id'] if entry['carrier'] == 0 for entry in self.sample_list]
+        self.my_recipe_ids = []
+        for entry in self.sample_list:
+            if entry['carrier'] == 1:
+                self.my_recipe_ids.append(entry['id'])
+            elif entry['carrier'] == 0:
+                self.cloud_recipe_ids.append(entry['id'])
         return True
 
     def check_better_recipes(self):
-        health_cloud_recipes = [entry['health'] if entry['carrier'] == 1 for entry in self.sample_list]
-        health_my_recipes = [entry['health'] if entry['carrier'] == 0 for entry in self.sample_list]
+        health_cloud_recipes = []
+        health_my_recipes = []
+
+        for entry in self.sample_list:
+            if entry['carrier'] == 1:
+                health_my_recipes.append(entry['health'])
+            elif entry['carrier'] == 0:
+                health_cloud_recipes.append(entry['health'])
+
         if max(health_cloud_recipes) > max(health_my_recipes):
             return True
         else:
@@ -112,7 +123,7 @@ class myBot(location,storage,expertise,sample_list):
 def id_of_best_recipe(recipes):
     max_health = -1
     for recipe in recipes:
-        if (recipe['carrier'] == 0) && (recipe['health'] > max_health):  # if it is in the cloud
+        if (recipe['carrier'] == 0) & (recipe['health'] > max_health):  # if it is in the cloud
             max_health = recipe['health']
             id_best_recipe = recipe['id']
     return id_best_recipe
@@ -124,7 +135,7 @@ def rank_recipes(recipes):
     for i in range(0,3):
         counter = 0
         for recipe in copy_recipes:
-            if (recipe['carrier'] == 0) && (recipe['health'] > max_health):  # if it is in the cloud
+            if (recipe['carrier'] == 0) & (recipe['health'] > max_health):  # if it is in the cloud
                 max_health = recipe['health']
                 id_best_recipe = recipe['id']
                 counter += 1
@@ -209,11 +220,11 @@ while True:
         cost_c = int(cost_c)
         cost_d = int(cost_d)
         cost_e = int(cost_e)
-        tempDict = {'id'=sample_id,'carrier'=carried_by,'rank'=rank,'health'=health,
-            'cost'=[cost_a,cost_b,cost_c,cost_d,cost_e]}
+        tempDict = {'id':sample_id,'carrier':carried_by,'rank':rank,'health':health,
+        'cost':[cost_a,cost_b,cost_c,cost_d,cost_e]}
         sample_list.append(tempDict)
 
-    if step_counter == 0                                                            # Is this the first tound?
+    if step_counter == 0:                                                            # Is this the first tound?
         MyBot = myBot(location,storage,sample_list)                                 # Initiate Roche-Fort 1.0
     else:
         roche_Fort_10(storage,expertise,sample_list,MyBot)                          # Execute Roche-Fort 1.0
