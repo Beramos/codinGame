@@ -15,14 +15,17 @@ class myBot(location,storage,expertise,sample_list):
         self.sample_list = sample_list
 
     def DIAGNOSIS_berserk:
+        return True
 
     def MOLECULAR_madness:
+        return True
 
     def LABORATORY_lazarus:
+        return True
 
     def can_make_med(self): # needs revision ---------------------------!
         for entry in self.sample_list:
-            if min([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost'])])) >= 0 &&\
+            if min([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost'])])) >= 0 && \
              sum([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost'])])) > 0:
                 return
             else:
@@ -48,6 +51,9 @@ class myBot(location,storage,expertise,sample_list):
                 return False
 
 def roche_Fort_10(storage,expertise,sample_list,MyBot):
+    # WIP: here needs to be an update of the bots sample_list, etc.
+    #MyBot.
+
     if MyBot.try_connect:
         MyBot.module_goto_connect()
         return True
@@ -57,6 +63,7 @@ def roche_Fort_10(storage,expertise,sample_list,MyBot):
             MyBot.module_goto_connect()
             return True
         else:
+            if MyBot.check_open_slots("molecules"):
 
 
 
