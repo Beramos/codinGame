@@ -21,7 +21,7 @@ Possible moves:
 
 * Did I want to connect to a module last step?
   * "yes"
-    * Connect to module
+    * Initiate *Module_goto_connect*
     * Restart
   * "no"
     * Can I make a medicine with the molecules I have?
@@ -75,6 +75,9 @@ Possible moves:
 
 *LABORATORY_lazarus*
 * Make them medicines yo!
+
+*Module_goto_connect*
+
 
 ## Ideas
 Use an optimiser each timestep, that checks the possible outcomes given the current inventory and the the available data in the cloud
