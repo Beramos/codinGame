@@ -26,18 +26,18 @@ class myBot(location,storage,expertise,sample_list):
     def MOLECULAR_madness(self):        # Horrible implementation
         self.ranked_recipes = rank_recipes(self.sample_list)
         self.can_complete = 0
-        mol1 = needed_molecules(ranked_recipes[0]['id'],self.inventory)
+        mol1 = needed_molecules(ranked_recipes[0]['cost'],self.inventory)
         tempInv = [mol1[i] + inventory[i] for i in range(0,len(inventory))]
 
         if num_open_slots("molecules",self.capacity,self.my_recipe_ids,tempInv) > 0:
-            mol2 = needed_molecules(ranked_recipes[1]['id'],[0, 0, 0, 0, 0])
+            mol2 = needed_molecules(ranked_recipes[1]['cost'],[0, 0, 0, 0, 0])
             tempInv = [mol2[i] + tempInv[i] for i in range(0,len(inventory))]
 
         if num_open_slots("molecules",self.capacity,self.my_recipe_ids,tempInv) > 0:
-            mol3 = needed_molecules(ranked_recipes[2]['id'],[0, 0, 0, 0, 0])
+            mol3 = needed_molecules(ranked_recipes[2]['cost'],[0, 0, 0, 0, 0])
             tempInv = [mol3[i] + tempInv[i] for i in range(0,len(inventory))]
             self.can_complete = 1
-        if ~needed_molecules(ranked_recipes[2]['id'],mol3):
+        if ~needed_molecules(ranked_recipes[2]['cost'],mol3):
             self.can_complete = 2
 
         molTot = [mol1[i] + mol2[i] + mol3[i] for i in rangerange(0,len(inventory))]
@@ -72,6 +72,7 @@ class myBot(location,storage,expertise,sample_list):
             return 'CONNECT ' + self.ranked_recipes[0]['id']
 
     def exe_queue(self):
+        return False
 
     def can_make_med(self): # needs revision ---------------------------!
         for entry in self.sample_list:
@@ -129,9 +130,9 @@ def rank_recipes(recipes):
             ranked_recipes.append(copy_recipes.pop[counter])
     return ranked_recipes
 
-
-def needed_molecules(id,inventory):
-    return True
+def needed_molecules(recipe,inventory):
+    ingredients = [recipe[i] - inventory[i] for i in range(0,len(inventory))]
+    return ingredients
 
 def num_open_slots(data_or_molecules,capacity,my_recipe_ids,storage):
     if data_or_molecules == "data":
