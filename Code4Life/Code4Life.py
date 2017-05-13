@@ -1,7 +1,7 @@
 import sys
 import math
 
-class myBot:
+class myBot(object):
     """ This is my robot """
     def __init__(self):
         self.hoarding = False
@@ -87,7 +87,7 @@ class myBot:
         if self.destination == self.location:
             if self.destination == "LABORATORY":
                 return LABORATORY_lazarus()
-            elif self.destination == "MOLECULE" :
+            elif self.destination == "MOLECULE":
                 return MOLECULAR_madness()
             else:
                 return DIAGNOSIS_berserk()       #print("CONNECT " + self.id_or_type)
@@ -231,6 +231,7 @@ while True:
 
     if step_counter == 0:                                                            # Is this the first tound?
         MyBot = myBot()                                                              # Initiate Roche-Fort 1.0
-    roche_Fort_10(storage,expertise,sample_list,MyBot)                          # Execute Roche-Fort 1.0
+    step_counter +=  1
+    roche_Fort_10(storage,expertise,sample_list,MyBot)                                  # Execute Roche-Fort 1.0
 
     # To debug: print("Debug messages...", file=sys.stderr)
