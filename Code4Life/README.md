@@ -69,3 +69,7 @@ Possible moves:
 
 *LABORATORY_lazarus*
 * Make them medicines yo!
+
+## Ideas
+Use an optimiser each timestep, that checks the possible outcomes given the current inventory and the the available data in the cloud
+
