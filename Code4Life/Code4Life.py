@@ -1,10 +1,18 @@
 import sys
 import math
 
-class myBot:
-    """ This is my robot, jep! """
-    def __init__(self):
-    self.hoarding = False
+class myBot(location,storage,expertise,sample_list):
+    """ This is my robot """
+    def __init__(self,location):
+        self.hoarding = False
+        self.try_connect = False
+        self.location = location
+        self.destination = "DIAGNOSIS"
+        self.id_or_type = ""
+        self.capacity = [3 10]          # carrying capacity 0:data,1:MOLECULES
+        self.storage = storage
+        self.expertise = expertise
+        self.sample_list = sample_list
 
     def DIAGNOSIS_berserk:
 
@@ -12,18 +20,45 @@ class myBot:
 
     def LABORATORY_lazarus:
 
-def can_make_med(sample_list,storage):
-    for entry in sample_list:
-        if min([entry['cost'][i]-storage[i] for i in range(0,len(entry['cost'])])) >= 0 &&\
-         sum([entry['cost'][i]-storage[i] for i in range(0,len(entry['cost'])])) > 0:
-            return
-        else:
-            return False
+    def can_make_med(self): # needs revision ---------------------------!
+        for entry in self.sample_list:
+            if min([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost'])])) >= 0 &&\
+             sum([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost'])])) > 0:
+                return
+            else:
+                return False
 
-def Roche-Fort_10(storage,expertise,sample_list):
-    if can_make_med(sample_list,storage):
-        return "MODULE laboratory"
+    def module_goto_connect(self):
+        if self.destination == self.location:
+            print("CONNECT " + self.id_or_type)
+        else:
+            print("GOTO " + self.destination)
+        return True
+
+    def check_open_slots(self,data_or_molecules):
+        if data_or_molecules == "data":
+            if self.capacity[0] > len(self.expertise):
+                return True
+            else:
+                return False
+        else:
+            if self.capacity[1] > len(self.storage):
+                return True
+            else:
+                return False
+
+def roche_Fort_10(storage,expertise,sample_list,MyBot):
+    if MyBot.try_connect:
+        MyBot.module_goto_connect()
+        return True
     else:
+        if can_make_med(sample_list,storage):
+            MyBot.destination = "LABORATORY"
+            MyBot.module_goto_connect()
+            return True
+        else:
+
+
 
     return move
 

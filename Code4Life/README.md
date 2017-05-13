@@ -13,20 +13,20 @@ Possible moves:
 
 ## AI's
 
-### Roche-Fort 1.0
+### Roche-Fort 1.
 
 **State machine:**
 
 <----------------- Start -------------->
 
-* Did I want to connect to a module last step?
+* Did I want to connect to a module last step
   * "yes"
-    * Initiate *Module_goto_connect*
+    * Initiate *Module_goto_connect: destination*
     * Restart
   * "no"
     * Can I make a medicine with the molecules I have?
       * "yes"
-        * Go the *Laboratory module*
+        * Go the *Module_goto_connect: Laboratory module*
         * Make the medicine
         * Restart
       * "no"
