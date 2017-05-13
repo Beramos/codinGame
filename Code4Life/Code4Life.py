@@ -23,11 +23,41 @@ class myBot(location,storage,expertise,sample_list):
             self.queue.append("take_data")
         return "CONNECT " + str(id_of_best_recipe(self.sample_list))
 
-    def MOLECULAR_madness(self):
-        if self.hoarding
+    def MOLECULAR_madness(self):        # Horrible implementation
+        ranked_recipes = rank_recipes(self.sample_list)
+        mol1 = needed_molecules(ranked_recipes[0]['id'],self.inventory)
+        tempInv = [mol1[i] + inventory[i] for i in range(0,len(inventory))]
 
-        self.queue.pop([0])
-        return True
+        if num_open_slots("molecules",self.capacity,self.my_recipe_ids,tempInv) > 0:
+            mol2 = needed_molecules(ranked_recipes[1]['id'],[0, 0, 0, 0, 0])
+            tempInv = [mol2[i] + tempInv[i] for i in range(0,len(inventory))]
+
+        if num_open_slots("molecules",self.capacity,self.my_recipe_ids,tempInv) > 0:
+            mol3 = needed_molecules(ranked_recipes[2]['id'],[0, 0, 0, 0, 0])
+            tempInv = [mol3[i] + tempInv[i] for i in range(0,len(inventory))]
+
+        molTot = [mol1[i] + mol2[i] + mol3[i] for i in rangerange(0,len(inventory))]
+        for i in range(0, molTot[0]):
+            self.queue.append('CONNECT ' + 'A')
+        void = molTot.pop[0]
+
+        for i in range(0, molTot[1]):
+            self.queue.append('CONNECT ' + 'B')
+        void = molTot.pop[1]
+
+        for i in range(0, molTot[2]):
+            self.queue.append('CONNECT ' + 'C')
+        void = molTot.pop[2]
+
+        for i in range(0, molTot[3]):
+            self.queue.append('CONNECT ' + 'D')
+        void = molTot.pop[3]
+
+        for i in range(0, molTot[4]):
+            self.queue.append('CONNECT ' + 'E')
+        void = molTot.pop[4]
+
+        return "CONNECT " + str(self.queue.pop[-1]) # only one molecule should remain
 
     def LABORATORY_lazarus(self):
         return True
@@ -54,12 +84,6 @@ class myBot(location,storage,expertise,sample_list):
             print("GOTO " + self.destination)
         return True
 
-    def num_open_slots(self,data_or_molecules):
-        if data_or_molecules == "data":
-            return self.capacity[0] - len(self.my_recipe_ids)
-        else:
-            return self.capacity[1] - len(self.storage)
-
     def update_recipes(self):
         self.my_recipe_ids = [entry['id'] if entry['carrier'] == 0 for entry in self.sample_list]
         self.cloud_recipe_ids = [entry['id'] if entry['carrier'] == 0 for entry in self.sample_list]
@@ -82,8 +106,30 @@ def id_of_best_recipe(recipes):
             id_best_recipe = recipe['id']
     return id_best_recipe
 
-def needed_molecules():
+def rank_recipes(recipes):
+    copy_recipes = recipes
+    max_health = -1
+    ranked_recipes = []
+    for i in range(0,3):
+        counter = 0
+        for recipe in copy_recipes:
+            if (recipe['carrier'] == 0) && (recipe['health'] > max_health):  # if it is in the cloud
+                max_health = recipe['health']
+                id_best_recipe = recipe['id']
+                counter += 1
+            ranked_recipes.append(copy_recipes.pop[counter])
+    return ranked_recipes
+
+
+def needed_molecules(id,inventory):
     return True
+
+def num_open_slots(data_or_molecules,capacity,my_recipe_ids,storage):
+    if data_or_molecules == "data":
+        return capacity[0] - len(my_recipe_ids)
+    else:
+        return capacity[1] - len(storage)
+
 
 # Definition of state machine
 def roche_Fort_10(storage,expertise,sample_list,MyBot):
@@ -101,7 +147,7 @@ def roche_Fort_10(storage,expertise,sample_list,MyBot):
             MyBot.module_goto_connect()
             return True
         else:
-            if MyBot.num_open_slots("molecules") > 0:
+            if MyBot.num_open_slots("molecules",MyBot.capacity,MyBot.my_recipe_ids,MyBot.storage) > 0:
                 if MyBot.check_better_recipes():
                     MyBot.DIAGNOSIS_berserk()
                     return True

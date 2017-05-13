@@ -48,7 +48,13 @@ Possible moves:
 * Fill up with the most recipe available
 * Add task to queue to fill up with recipes
 
-*MOLECULAR_madness*
+*MOLECULAR_madness2.0*
+* rank the available recipes from high to low
+* check the needed molecules for the first one
+* is there room for more ?
+* check the needed molecules for the second one
+
+*MOLECULAR_madness1.0*
 * Did I already start gathering for the second
   * "yes"
     * Get the molecules for that one
@@ -73,7 +79,7 @@ Possible moves:
 *Module_goto_connect*
 
 ## Ideas
-* **Difficulty unknown:** there is a need to query based on the recipe IDs 
+* **Difficulty unknown:** there is a need to query based on the recipe IDs
 * **Medium:** make the queuing system more elegant
 * **Simple:** start from a location based state Machine, starting pount of cascade is dependent on the location of the robot, it makes sense to fill up on recipes if the robot is at the diagnosis module
 * **Hard:** Use an optimiser each timestep, that checks the possible outcomes given the current inventory and the the available data in the cloud
