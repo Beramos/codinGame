@@ -19,9 +19,10 @@ class myBot(location,storage,expertise,sample_list):
         self.sample_list = sample_list
 
     def DIAGNOSIS_berserk(self):
-        for i in range(0,self.num_open_slots("data")):
-            self.queue.append("take_data")
-        return "CONNECT " + str(id_of_best_recipe(self.sample_list))
+        self.ranked_recipes = rank_recipes(self.sample_list)
+        for i in range(1,self.num_open_slots("data")):
+            self.queue.append("CONNECT " + str(self.rank_recipes[i]['id']))
+        return "CONNECT " + str(self.rank_recipes[0]['id'])
 
     def MOLECULAR_madness(self):        # Horrible implementation
         self.ranked_recipes = rank_recipes(self.sample_list)
@@ -72,7 +73,7 @@ class myBot(location,storage,expertise,sample_list):
             return 'CONNECT ' + self.ranked_recipes[0]['id']
 
     def exe_queue(self):
-        return False
+        return self.queue.pop[0]
 
     def can_make_med(self): # needs revision ---------------------------!
         for entry in self.sample_list:
