@@ -8,7 +8,7 @@ class myBot:
         self.hoarding_id = False
         self.try_connect = False
         self.location = 'neutral'
-        self.destination = "diagnosis"
+        self.destination = "DIAGNOSIS"
         self.id_or_type = ""
         self.capacity = [3, 10]          # carrying capacity 0:data,1:MOLECULES
         self.storage = [0, 0, 0, 0, 0]
@@ -78,7 +78,7 @@ class myBot:
     def can_make_med(self): # needs revision ---------------------------!
         for entry in self.sample_list:
             if (min([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost']))]) >= 0) & \
-             (sum([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost']))]) > 0):
+             (sum([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost']))]) < 0):
                 return True
             else:
                 return False
@@ -92,8 +92,8 @@ class myBot:
             else:
                 return DIAGNOSIS_berserk()       #print("CONNECT " + self.id_or_type)
         else:
-            print("GOTO " + self.destination)
-        return True
+            self.location = self.destination
+            return "GOTO " + self.destination
 
     def update_recipes(self):
         self.my_recipe_ids = []
