@@ -29,23 +29,17 @@ class myBot(object):
         self.ranked_recipes = rank_recipes(self.sample_list)
         self.can_complete = 0
         mol1 = needed_molecules(self.ranked_recipes[0]['cost'],self.storage)
-        print(needed_molecules(self.ranked_recipes[0]['cost'],self.storage), file =sys.stderr)
         mol2 = needed_molecules(self.ranked_recipes[1]['cost'],[0, 0, 0, 0, 0])
         mol3 = needed_molecules(self.ranked_recipes[2]['cost'],[0, 0, 0, 0, 0])
         tempInv = [mol1[i] + self.storage[i] for i in range(0,len(self.storage))]
         molTot = mol1
 
         if self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,molTot) >= sum(mol2):
-            print('openslots' + str(self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,molTot)) + str(sum(mol2)), file=sys.stderr)
             molTot = [mol1[i] + mol2[i] for i in range(0,5)]
-            print(molTot, file=sys.stderr)
 
         if self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,molTot) >= sum(mol3):
-            print('openslots' + str(self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,molTot)) + str(sum(mol2)), file=sys.stderr)
             molTot = [mol1[i] + mol2[i] +mol3[i] for i in range(0,5)]
-            print(molTot, file=sys.stderr)
 
-        print(molTot, file=sys.stderr)
         for i in range(0, molTot[0]):
             self.queue.append('CONNECT ' + 'A')
         void = molTot.pop(0)
@@ -83,8 +77,8 @@ class myBot(object):
     def can_make_med(self): # needs revision ---------------------------!
         if len(self.ranked_recipes) > 0:
             entry = self.ranked_recipes[0]
-            if (min([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost']))]) >= 0) & \
-                (sum([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost']))]) > 0):
+            if (min([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost']))]) <= 0) & \
+                (sum([entry['cost'][i]-self.storage[i] for i in range(0,len(entry['cost']))]) <= 0):
                 return True
             else:
                 return False
@@ -170,15 +164,12 @@ def roche_Fort_10(storage,expertise,sample_list,MyBot):
 
     if len(MyBot.queue) > 0:
         move = MyBot.exe_queue()
-        print(len(MyBot.queue), file=sys.stderr)
     else:
         if MyBot.can_make_med():
             MyBot.destination = "LABORATORY"
             move = MyBot.module_goto_connect()
         else:
-            print("make in med else", file=sys.stderr)
             if MyBot.num_open_slots("data",MyBot.capacity,MyBot.my_recipe_ids,MyBot.storage) > 0:
-                print([MyBot.my_recipe_ids,MyBot.capacity], file=sys.stderr)
                 if MyBot.check_better_recipes():
                     MyBot.destination = "DIAGNOSIS"
                     move = MyBot.module_goto_connect()
@@ -209,13 +200,15 @@ while True:
         storage_c = int(storage_c)
         storage_d = int(storage_d)
         storage_e = int(storage_e)
-        storage = [storage_a,storage_b,storage_c,storage_d,storage_e]
         expertise_a = int(expertise_a)
         expertise_b = int(expertise_b)
         expertise_c = int(expertise_c)
         expertise_d = int(expertise_d)
         expertise_e = int(expertise_e)
-        expertise = [expertise_a,expertise_b,expertise_c,expertise_d,expertise_e]
+
+        if i == 0:
+            storage = [storage_a,storage_b,storage_c,storage_d,storage_e]
+            expertise = [expertise_a,expertise_b,expertise_c,expertise_d,expertise_e]
 
     available_a, available_b, available_c, available_d, available_e = [int(i) for i in input().split()]
     sample_count = int(input())
