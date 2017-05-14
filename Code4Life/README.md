@@ -24,6 +24,8 @@ Possible moves:
     * Complete residual task
     * Restart
   * "no"
+
+
     * Can I make a medicine with the molecules I have?
       * "yes"
         * Go the *Module_goto_connect: Laboratory module*
@@ -36,9 +38,17 @@ Possible moves:
               * "yes"
                 * Initiate *Module_goto_connect: diagnosis module*
                 * Restart
-              * "no"
-                * Initiate  *Module_goto_connect: molecular module*
-                * Restart
+              * Do I hold diagnosed samples?
+                * "yes"
+                  * Initiate  *Module_goto_connect: molecular module*
+                  * Restart
+              * Do I hold undiagnosed samples?
+                * "yes"
+                  * Initiate *Module_goto_connect: diagnosis module*
+                  * Restart
+                * "no"
+                  * Initiate *Module_goto_connect: sample module*
+                  * Restart
           * "no"
             * Initiate  *Module_goto_connect: molecular module*
             * Restart
