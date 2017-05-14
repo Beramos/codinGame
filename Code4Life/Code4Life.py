@@ -182,6 +182,7 @@ def roche_Fort_10(storage,expertise,sample_list,MyBot):
     MyBot.storage = storage
     MyBot.ranked_recipes_my = rank_recipes(MyBot.my_recipes)
     MyBot.ranked_recipes_cloud = rank_recipes(MyBot.cloud_recipes)
+    move = -1
 
     if len(MyBot.queue) > 0:
         move = MyBot.exe_queue()
@@ -197,7 +198,9 @@ def roche_Fort_10(storage,expertise,sample_list,MyBot):
             else:
                 MyBot.destination = "MOLECULES"
                 move = MyBot.module_goto_connect()
-
+    if move == -1:
+        move = "GOTO DIAGNOSIS"
+        print("Nothing to do", file = sys.stderr)
     print(move)
     return True
 
