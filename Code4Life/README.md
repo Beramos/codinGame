@@ -36,6 +36,9 @@ Possible moves:
               * "yes"
                 * Initiate *Module_goto_connect: diagnosis module*
                 * Restart
+              * "no"
+                * Initiate  *Module_goto_connect: molecular module*
+                * Restart
           * "no"
             * Initiate  *Module_goto_connect: molecular module*
             * Restart

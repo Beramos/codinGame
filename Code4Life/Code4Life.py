@@ -185,6 +185,9 @@ def roche_Fort_10(storage,expertise,sample_list,MyBot):
                 if MyBot.check_better_recipes():
                     MyBot.destination = "DIAGNOSIS"
                     move = MyBot.module_goto_connect()
+                else:
+                    MyBot.destination = "MOLECULES"
+                    move = MyBot.module_goto_connect()
             else:
                 MyBot.destination = "MOLECULES"
                 move = MyBot.module_goto_connect()
