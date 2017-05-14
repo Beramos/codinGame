@@ -24,6 +24,7 @@ class myBot(object):
 
     def DIAGNOSIS_berserk(self):
         self.ranked_recipes_cloud = rank_recipes(self.cloud_recipes)
+        print(self.ranked_recipes_cloud , file = sys.stderr)
         for i in range(1,self.num_open_slots("data",self.capacity,self.my_recipe_ids,self.storage)):
             self.queue.append("CONNECT " + str(self.ranked_recipes_cloud[i]['id']))
         return "CONNECT " + str(self.ranked_recipes_cloud[0]['id'])
@@ -158,18 +159,7 @@ def id_of_best_recipe(recipes):
     return id_best_recipe
 
 def rank_recipes(recipes):
-    copy_recipes = recipes
-    max_health = -1
-    ranked_recipes = []
-    for i in range(0,min([len(recipes)]+[3])):
-        counter = 0
-        for recipe in copy_recipes:
-            if (recipe['carrier'] == -1) & (recipe['health'] > max_health):  # if it is in the cloud
-                max_health = recipe['health']
-                id_best_recipe = recipe['id']
-            ranked_recipes.append(copy_recipes.pop(counter))
-            counter += 1
-    return ranked_recipes
+    return sorted(recipes, key=lambda k: k['health'], reverse=True)
 
 def needed_molecules(recipe,inventory):
     ingredients = [recipe[i] - inventory[i] for i in range(0,len(inventory))]
