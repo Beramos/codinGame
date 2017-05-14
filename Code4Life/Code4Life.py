@@ -8,7 +8,7 @@ class myBot(object):
         self.hoarding_id = False
         self.try_connect = False
         self.location = 'neutral'
-        self.destination = "DIAGNOSIS"
+        self.destination = "SAMPLES"
         self.id_or_type = ""
         self.capacity = [3, 10]          # carrying capacity 0:data,1:MOLECULES
         self.storage = [0, 0, 0, 0, 0]
@@ -21,6 +21,8 @@ class myBot(object):
         self.ranked_recipes_my = []
         self.my_recipe_ids = []
         self.cloud_recipe_ids = []
+        self.my_recipe_undiagnosed = []
+        self.cloud_recipe_undiagnosed = []
 
     def DIAGNOSIS_berserk(self):
         self.ranked_recipes_cloud = rank_recipes(self.cloud_recipes)
@@ -82,6 +84,9 @@ class myBot(object):
             print('I can make one meds.',file = sys.stderr)
             return 'CONNECT ' + str(self.ranked_recipes_my[0]['id'])
 
+    def SAMPLE_secure(self):
+        return True
+
     def exe_queue(self):
         return self.queue.pop(0)
 
@@ -100,6 +105,8 @@ class myBot(object):
                 return self.LABORATORY_lazarus()
             elif self.destination == "MOLECULES":
                 return self.MOLECULAR_madness()
+            elif self.destination == "SAMPLES":
+                return self.SAMPLE_secure()
             else:
                 return self.DIAGNOSIS_berserk()       #print("CONNECT " + self.id_or_type)
         else:
@@ -107,8 +114,10 @@ class myBot(object):
             return "GOTO " + self.destination
 
     def update_recipes(self):
-        self.my_recipes = []
-        self.cloud_recipes = []
+        self.my_recipes_diagnosed = []
+        self.cloud_recipes_diagnosed = []
+        self.my_recipe_undiagnosed = []
+        self.cloud_recipe_undiagnosed = []
         self.my_recipe_ids = []
         self.cloud_recipe_ids = []
 
@@ -130,16 +139,18 @@ class myBot(object):
                 health_my_recipes.append(entry['health'])
             elif entry['carrier'] == -1:
                 health_cloud_recipes.append(entry['health'])
-
-        if len(health_my_recipes) == 0:
-            return True
-        else:
-            if max(health_cloud_recipes) > max(health_my_recipes):
-                print(health_cloud_recipes + health_my_recipes, file = sys.stderr)
-                print(self.sample_list, file = sys.stderr)
+        if len(sample_list) > 0:
+            if len(health_my_recipes) == 0:
                 return True
             else:
-                return False
+                if max(health_cloud_recipes) > max(health_my_recipes):
+                    print(health_cloud_recipes + health_my_recipes, file = sys.stderr)
+                    print(self.sample_list, file = sys.stderr)
+                    return True
+                else:
+                    return False
+        else:
+            return False
 
     def num_open_slots(self,data_or_molecules,capacity,my_recipe_ids,storage):
         if data_or_molecules == "data":
@@ -169,8 +180,8 @@ def roche_Fort_10(storage,expertise,sample_list,MyBot):
     MyBot.sample_list = sample_list #update sample_list
     MyBot.update_recipes()          #distinguish between cloud recipes and my recipes
     MyBot.storage = storage
-    MyBot.ranked_recipes_my = rank_recipes(MyBot.my_recipes)
-    MyBot.ranked_recipes_cloud = rank_recipes(MyBot.cloud_recipes)
+    MyBot.ranked_diagnosed_my = rank_recipes(MyBot.my_recipes_diagnosed)
+    MyBot.ranked_diagnoses_cloud = rank_recipes(MyBot.cloud_recipes_diagnosed)
     move = -1
 
     if len(MyBot.queue) > 0:
@@ -182,6 +193,7 @@ def roche_Fort_10(storage,expertise,sample_list,MyBot):
         else:
             if MyBot.num_open_slots("data",MyBot.capacity,MyBot.my_recipe_ids,MyBot.storage) > 0:
                 if MyBot.check_better_recipes():
+                    print('There are better recipes available', file = sys.stderr)
                     MyBot.destination = "DIAGNOSIS"
                     move = MyBot.module_goto_connect()
                 else:
