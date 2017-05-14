@@ -32,22 +32,21 @@ class myBot(object):
     def MOLECULAR_madness(self):        # Horrible implementation
         print(self.ranked_recipes_my, file = sys.stderr)
         self.can_complete = -1
-        mol1 = needed_molecules(self.ranked_recipes_my[0]['cost'],self.storage)
-        mol2 = needed_molecules(self.ranked_recipes_my[1]['cost'],[0, 0, 0, 0, 0])
-        mol3 = needed_molecules(self.ranked_recipes_my[2]['cost'],[0, 0, 0, 0, 0])
-        tempInv = [mol1[i] + self.storage[i] for i in range(0,len(self.storage))]
-
-        if self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,mol1) >= sum(mol1):
-            molTot = mol1
-            self.can_complete = 0
-
-        if self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,molTot) >= sum(mol2):
-            molTot = [mol1[i] + mol2[i] for i in range(0,5)]
-            self.can_complete = 1
-
-        if self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,molTot) >= sum(mol3):
-            molTot = [mol1[i] + mol2[i] +mol3[i] for i in range(0,5)]
-            self.can_complete = 2
+        if len(self.ranked_recipes_my)>= 1:
+            mol1 = needed_molecules(self.ranked_recipes_my[0]['cost'],self.storage)
+            if self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,mol1) >= sum(mol1):
+                molTot = mol1
+                self.can_complete = 0
+        if len(self.ranked_recipes_my)>= 2:
+            mol2 = needed_molecules(self.ranked_recipes_my[1]['cost'],[0, 0, 0, 0, 0])
+            if self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,molTot) >= sum(mol2):
+                molTot = [mol1[i] + mol2[i] for i in range(0,5)]
+                self.can_complete = 1
+        if len(self.ranked_recipes_my)>= 3:
+            mol3 = needed_molecules(self.ranked_recipes_my[2]['cost'],[0, 0, 0, 0, 0])
+            if self.num_open_slots("molecules",self.capacity,self.my_recipe_ids,molTot) >= sum(mol3):
+                molTot = [mol1[i] + mol2[i] +mol3[i] for i in range(0,5)]
+                self.can_complete = 2
 
         for i in range(0, molTot[0]):
             self.queue.append('CONNECT ' + 'A')
